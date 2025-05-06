@@ -487,7 +487,7 @@ When ready to publish your custom MCP server:
 
 # License
 
-[ISC License](https://opensource.org/licenses/ISC)
+[MIT License](https://opensource.org/licenses/MIT)
 
 ```json
 {

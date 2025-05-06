@@ -18,7 +18,14 @@ import type { CloudStorageProvider, StorageUploadOptions } from './types';
 import type { ICloudStorage } from './types';
 
 export function getCurrentStorage(): ICloudStorage {
-	if (!env.CLOUDFLARE_CDN_ACCESS_KEY || !env.CLOUDFLARE_CDN_SECRET_KEY) {
+	if (
+		!env.CLOUDFLARE_CDN_ACCESS_KEY ||
+		!env.CLOUDFLARE_CDN_SECRET_KEY ||
+		!env.CLOUDFLARE_CDN_BUCKET_NAME ||
+		!env.CLOUDFLARE_CDN_ENDPOINT_URL ||
+		!env.CLOUDFLARE_CDN_BASE_URL ||
+		!env.CLOUDFLARE_CDN_PROJECT_NAME
+	) {
 		throw new Error(
 			'Cloudflare CDN access key or secret key is not defined',
 		);
