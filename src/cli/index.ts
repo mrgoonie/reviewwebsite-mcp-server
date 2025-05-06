@@ -2,7 +2,7 @@ import { Command } from 'commander';
 import { Logger } from '../utils/logger.util.js';
 import { VERSION, CLI_NAME } from '../utils/constants.util.js';
 
-import screenshotOneCli from './screenshotone.cli.js';
+import reviewWebsiteCli from './reviewwebsite.cli.js';
 
 /**
  * CLI entry point for the ScreenshotOne MCP Server
@@ -29,7 +29,7 @@ export async function runCli(args: string[]) {
 
 	// Register CLI commands
 	cliLogger.debug('Registering CLI commands...');
-	screenshotOneCli.register(program);
+	reviewWebsiteCli.register(program);
 	cliLogger.debug('CLI commands registered successfully');
 
 	// Handle unknown commands
