@@ -1,0 +1,694 @@
+/**
+ * @file reviewwebsite.controller.ts
+ * @description Controller for the ReviewWebsite API operations
+ */
+
+import reviewWebsiteService from '../services/vendor.reviewwebsite.service.js';
+import { Logger } from '../utils/logger.util.js';
+import { ControllerResponse } from '../types/common.types.js';
+import { handleControllerError } from '../utils/error-handler.util.js';
+import { config } from '../utils/config.util.js';
+import {
+	ReviewOptions,
+	ConvertToMarkdownOptions,
+	ExtractDataOptions,
+	ExtractLinksOptions,
+	SummarizeOptions,
+	ReviewWebsiteOptions,
+} from '../tools/reviewwebsite.types.js';
+
+/**
+ * @namespace ReviewWebsiteController
+ * @description Controller responsible for handling ReviewWebsite API operations.
+ *              It orchestrates calls to the ReviewWebsite service, applies defaults,
+ *              maps options, and formats the response.
+ */
+
+/**
+ * Get API key from options or config
+ * @param options Options that may contain API key
+ * @returns API key
+ */
+function getApiKey(options?: ReviewWebsiteOptions): string {
+	const apiKey = options?.api_key || config.get('REVIEWWEBSITE_API_KEY');
+	if (!apiKey) {
+		throw new Error('API key is required for ReviewWebsite API');
+	}
+	return apiKey;
+}
+
+/**
+ * @function getAIModels
+ * @description Get available AI models from ReviewWebsite API
+ * @memberof ReviewWebsiteController
+ * @param {ReviewWebsiteOptions} options - Options including API key
+ * @returns {Promise<ControllerResponse>} A promise that resolves to the standard controller response
+ * @throws {McpError} Throws an McpError if the service call fails or returns an error
+ */
+async function getAIModels(
+	options: ReviewWebsiteOptions = {},
+): Promise<ControllerResponse> {
+	const methodLogger = Logger.forContext(
+		'controllers/reviewwebsite.controller.ts',
+		'getAIModels',
+	);
+
+	methodLogger.debug('Getting AI models');
+
+	try {
+		const apiKey = getApiKey(options);
+		const result = await reviewWebsiteService.getAIModels(apiKey);
+
+		return {
+			content: JSON.stringify(result, null, 2),
+		};
+	} catch (error) {
+		return handleControllerError(error, {
+			entityType: 'AIModels',
+			operation: 'getting',
+			source: 'controllers/reviewwebsite.controller.ts@getAIModels',
+		});
+	}
+}
+
+/**
+ * @function createReview
+ * @description Create a new website review
+ * @memberof ReviewWebsiteController
+ * @param {string} url - Website URL to review
+ * @param {string} instructions - Custom review instructions
+ * @param {ReviewOptions} reviewOptions - Review options
+ * @param {ReviewWebsiteOptions} options - Options including API key
+ * @returns {Promise<ControllerResponse>} A promise that resolves to the standard controller response
+ * @throws {McpError} Throws an McpError if the service call fails or returns an error
+ */
+async function createReview(
+	url: string,
+	instructions?: string,
+	reviewOptions?: ReviewOptions,
+	options: ReviewWebsiteOptions = {},
+): Promise<ControllerResponse> {
+	const methodLogger = Logger.forContext(
+		'controllers/reviewwebsite.controller.ts',
+		'createReview',
+	);
+
+	methodLogger.debug('Creating review', { url, instructions, reviewOptions });
+
+	try {
+		const apiKey = getApiKey(options);
+		const result = await reviewWebsiteService.createReview(
+			url,
+			instructions,
+			reviewOptions,
+			apiKey,
+		);
+
+		return {
+			content: JSON.stringify(result, null, 2),
+		};
+	} catch (error) {
+		return handleControllerError(error, {
+			entityType: 'Review',
+			operation: 'creating',
+			source: 'controllers/reviewwebsite.controller.ts@createReview',
+			additionalInfo: { url },
+		});
+	}
+}
+
+/**
+ * @function getReview
+ * @description Get a specific review by ID
+ * @memberof ReviewWebsiteController
+ * @param {string} reviewId - ID of the review to retrieve
+ * @param {ReviewWebsiteOptions} options - Options including API key
+ * @returns {Promise<ControllerResponse>} A promise that resolves to the standard controller response
+ * @throws {McpError} Throws an McpError if the service call fails or returns an error
+ */
+async function getReview(
+	reviewId: string,
+	options: ReviewWebsiteOptions = {},
+): Promise<ControllerResponse> {
+	const methodLogger = Logger.forContext(
+		'controllers/reviewwebsite.controller.ts',
+		'getReview',
+	);
+
+	methodLogger.debug('Getting review', { reviewId });
+
+	try {
+		const apiKey = getApiKey(options);
+		const result = await reviewWebsiteService.getReview(reviewId, apiKey);
+
+		return {
+			content: JSON.stringify(result, null, 2),
+		};
+	} catch (error) {
+		return handleControllerError(error, {
+			entityType: 'Review',
+			operation: 'getting',
+			source: 'controllers/reviewwebsite.controller.ts@getReview',
+			additionalInfo: { reviewId },
+		});
+	}
+}
+
+/**
+ * @function listReviews
+ * @description Get all reviews with pagination
+ * @memberof ReviewWebsiteController
+ * @param {number} page - Page number
+ * @param {number} limit - Number of reviews per page
+ * @param {ReviewWebsiteOptions} options - Options including API key
+ * @returns {Promise<ControllerResponse>} A promise that resolves to the standard controller response
+ * @throws {McpError} Throws an McpError if the service call fails or returns an error
+ */
+async function listReviews(
+	page?: number,
+	limit?: number,
+	options: ReviewWebsiteOptions = {},
+): Promise<ControllerResponse> {
+	const methodLogger = Logger.forContext(
+		'controllers/reviewwebsite.controller.ts',
+		'listReviews',
+	);
+
+	methodLogger.debug('Listing reviews', { page, limit });
+
+	try {
+		const apiKey = getApiKey(options);
+		const result = await reviewWebsiteService.listReviews(
+			page,
+			limit,
+			apiKey,
+		);
+
+		return {
+			content: JSON.stringify(result, null, 2),
+		};
+	} catch (error) {
+		return handleControllerError(error, {
+			entityType: 'Reviews',
+			operation: 'listing',
+			source: 'controllers/reviewwebsite.controller.ts@listReviews',
+		});
+	}
+}
+
+/**
+ * @function updateReview
+ * @description Update an existing review
+ * @memberof ReviewWebsiteController
+ * @param {string} reviewId - ID of the review to update
+ * @param {string} url - Updated website URL
+ * @param {string} instructions - Updated review instructions
+ * @param {ReviewWebsiteOptions} options - Options including API key
+ * @returns {Promise<ControllerResponse>} A promise that resolves to the standard controller response
+ * @throws {McpError} Throws an McpError if the service call fails or returns an error
+ */
+async function updateReview(
+	reviewId: string,
+	url?: string,
+	instructions?: string,
+	options: ReviewWebsiteOptions = {},
+): Promise<ControllerResponse> {
+	const methodLogger = Logger.forContext(
+		'controllers/reviewwebsite.controller.ts',
+		'updateReview',
+	);
+
+	methodLogger.debug('Updating review', { reviewId, url, instructions });
+
+	try {
+		const apiKey = getApiKey(options);
+		const result = await reviewWebsiteService.updateReview(
+			reviewId,
+			url,
+			instructions,
+			apiKey,
+		);
+
+		return {
+			content: JSON.stringify(result, null, 2),
+		};
+	} catch (error) {
+		return handleControllerError(error, {
+			entityType: 'Review',
+			operation: 'updating',
+			source: 'controllers/reviewwebsite.controller.ts@updateReview',
+			additionalInfo: { reviewId },
+		});
+	}
+}
+
+/**
+ * @function deleteReview
+ * @description Delete a specific review by ID
+ * @memberof ReviewWebsiteController
+ * @param {string} reviewId - ID of the review to delete
+ * @param {ReviewWebsiteOptions} options - Options including API key
+ * @returns {Promise<ControllerResponse>} A promise that resolves to the standard controller response
+ * @throws {McpError} Throws an McpError if the service call fails or returns an error
+ */
+async function deleteReview(
+	reviewId: string,
+	options: ReviewWebsiteOptions = {},
+): Promise<ControllerResponse> {
+	const methodLogger = Logger.forContext(
+		'controllers/reviewwebsite.controller.ts',
+		'deleteReview',
+	);
+
+	methodLogger.debug('Deleting review', { reviewId });
+
+	try {
+		const apiKey = getApiKey(options);
+		const result = await reviewWebsiteService.deleteReview(
+			reviewId,
+			apiKey,
+		);
+
+		return {
+			content: JSON.stringify(result, null, 2),
+		};
+	} catch (error) {
+		return handleControllerError(error, {
+			entityType: 'Review',
+			operation: 'deleting',
+			source: 'controllers/reviewwebsite.controller.ts@deleteReview',
+			additionalInfo: { reviewId },
+		});
+	}
+}
+
+/**
+ * @function convertToMarkdown
+ * @description Convert a URL to Markdown using AI
+ * @memberof ReviewWebsiteController
+ * @param {string} url - URL to convert
+ * @param {ConvertToMarkdownOptions} convertOptions - Conversion options
+ * @param {ReviewWebsiteOptions} options - Options including API key
+ * @returns {Promise<ControllerResponse>} A promise that resolves to the standard controller response
+ * @throws {McpError} Throws an McpError if the service call fails or returns an error
+ */
+async function convertToMarkdown(
+	url: string,
+	convertOptions?: ConvertToMarkdownOptions,
+	options: ReviewWebsiteOptions = {},
+): Promise<ControllerResponse> {
+	const methodLogger = Logger.forContext(
+		'controllers/reviewwebsite.controller.ts',
+		'convertToMarkdown',
+	);
+
+	methodLogger.debug('Converting URL to Markdown', { url, convertOptions });
+
+	try {
+		const apiKey = getApiKey(options);
+		const result = await reviewWebsiteService.convertToMarkdown(
+			url,
+			convertOptions,
+			apiKey,
+		);
+
+		return {
+			content: JSON.stringify(result, null, 2),
+		};
+	} catch (error) {
+		return handleControllerError(error, {
+			entityType: 'Markdown',
+			operation: 'converting',
+			source: 'controllers/reviewwebsite.controller.ts@convertToMarkdown',
+			additionalInfo: { url },
+		});
+	}
+}
+
+/**
+ * @function convertMultipleToMarkdown
+ * @description Convert multiple URLs to Markdown using AI
+ * @memberof ReviewWebsiteController
+ * @param {string[]} urls - URLs to convert
+ * @param {ConvertToMarkdownOptions} convertOptions - Conversion options
+ * @param {ReviewWebsiteOptions} options - Options including API key
+ * @returns {Promise<ControllerResponse>} A promise that resolves to the standard controller response
+ * @throws {McpError} Throws an McpError if the service call fails or returns an error
+ */
+async function convertMultipleToMarkdown(
+	urls: string[],
+	convertOptions?: ConvertToMarkdownOptions,
+	options: ReviewWebsiteOptions = {},
+): Promise<ControllerResponse> {
+	const methodLogger = Logger.forContext(
+		'controllers/reviewwebsite.controller.ts',
+		'convertMultipleToMarkdown',
+	);
+
+	methodLogger.debug('Converting multiple URLs to Markdown', {
+		urls,
+		convertOptions,
+	});
+
+	try {
+		const apiKey = getApiKey(options);
+		const result = await reviewWebsiteService.convertMultipleToMarkdown(
+			urls,
+			convertOptions,
+			apiKey,
+		);
+
+		return {
+			content: JSON.stringify(result, null, 2),
+		};
+	} catch (error) {
+		return handleControllerError(error, {
+			entityType: 'Markdown',
+			operation: 'converting multiple',
+			source: 'controllers/reviewwebsite.controller.ts@convertMultipleToMarkdown',
+			additionalInfo: { urlCount: urls.length },
+		});
+	}
+}
+
+/**
+ * @function extractData
+ * @description Extract structured data from a URL using AI
+ * @memberof ReviewWebsiteController
+ * @param {string} url - URL to extract data from
+ * @param {ExtractDataOptions} extractOptions - Extraction options
+ * @param {ReviewWebsiteOptions} options - Options including API key
+ * @returns {Promise<ControllerResponse>} A promise that resolves to the standard controller response
+ * @throws {McpError} Throws an McpError if the service call fails or returns an error
+ */
+async function extractData(
+	url: string,
+	extractOptions: ExtractDataOptions,
+	options: ReviewWebsiteOptions = {},
+): Promise<ControllerResponse> {
+	const methodLogger = Logger.forContext(
+		'controllers/reviewwebsite.controller.ts',
+		'extractData',
+	);
+
+	methodLogger.debug('Extracting data from URL', { url, extractOptions });
+
+	try {
+		const apiKey = getApiKey(options);
+		const result = await reviewWebsiteService.extractData(
+			url,
+			extractOptions,
+			apiKey,
+		);
+
+		return {
+			content: JSON.stringify(result, null, 2),
+		};
+	} catch (error) {
+		return handleControllerError(error, {
+			entityType: 'Data',
+			operation: 'extracting',
+			source: 'controllers/reviewwebsite.controller.ts@extractData',
+			additionalInfo: { url },
+		});
+	}
+}
+
+/**
+ * @function extractDataMultiple
+ * @description Extract structured data from multiple URLs using AI
+ * @memberof ReviewWebsiteController
+ * @param {string[]} urls - URLs to extract data from
+ * @param {ExtractDataOptions} extractOptions - Extraction options
+ * @param {ReviewWebsiteOptions} options - Options including API key
+ * @returns {Promise<ControllerResponse>} A promise that resolves to the standard controller response
+ * @throws {McpError} Throws an McpError if the service call fails or returns an error
+ */
+async function extractDataMultiple(
+	urls: string[],
+	extractOptions: ExtractDataOptions,
+	options: ReviewWebsiteOptions = {},
+): Promise<ControllerResponse> {
+	const methodLogger = Logger.forContext(
+		'controllers/reviewwebsite.controller.ts',
+		'extractDataMultiple',
+	);
+
+	methodLogger.debug('Extracting data from multiple URLs', {
+		urls,
+		extractOptions,
+	});
+
+	try {
+		const apiKey = getApiKey(options);
+		const result = await reviewWebsiteService.extractDataMultiple(
+			urls,
+			extractOptions,
+			apiKey,
+		);
+
+		return {
+			content: JSON.stringify(result, null, 2),
+		};
+	} catch (error) {
+		return handleControllerError(error, {
+			entityType: 'Data',
+			operation: 'extracting multiple',
+			source: 'controllers/reviewwebsite.controller.ts@extractDataMultiple',
+			additionalInfo: { urlCount: urls.length },
+		});
+	}
+}
+
+/**
+ * @function scrapeUrl
+ * @description Scrape a URL
+ * @memberof ReviewWebsiteController
+ * @param {string} url - URL to scrape
+ * @param {number} delayAfterLoad - Delay after page load in milliseconds
+ * @param {ReviewWebsiteOptions} options - Options including API key
+ * @returns {Promise<ControllerResponse>} A promise that resolves to the standard controller response
+ * @throws {McpError} Throws an McpError if the service call fails or returns an error
+ */
+async function scrapeUrl(
+	url: string,
+	delayAfterLoad?: number,
+	options: ReviewWebsiteOptions = {},
+): Promise<ControllerResponse> {
+	const methodLogger = Logger.forContext(
+		'controllers/reviewwebsite.controller.ts',
+		'scrapeUrl',
+	);
+
+	methodLogger.debug('Scraping URL', { url, delayAfterLoad });
+
+	try {
+		const apiKey = getApiKey(options);
+		const result = await reviewWebsiteService.scrapeUrl(
+			url,
+			delayAfterLoad,
+			apiKey,
+		);
+
+		return {
+			content: JSON.stringify(result, null, 2),
+		};
+	} catch (error) {
+		return handleControllerError(error, {
+			entityType: 'URL',
+			operation: 'scraping',
+			source: 'controllers/reviewwebsite.controller.ts@scrapeUrl',
+			additionalInfo: { url },
+		});
+	}
+}
+
+/**
+ * @function extractLinks
+ * @description Extract links from a URL
+ * @memberof ReviewWebsiteController
+ * @param {string} url - URL to extract links from
+ * @param {ExtractLinksOptions} extractOptions - Link extraction options
+ * @param {ReviewWebsiteOptions} options - Options including API key
+ * @returns {Promise<ControllerResponse>} A promise that resolves to the standard controller response
+ * @throws {McpError} Throws an McpError if the service call fails or returns an error
+ */
+async function extractLinks(
+	url: string,
+	extractOptions?: ExtractLinksOptions,
+	options: ReviewWebsiteOptions = {},
+): Promise<ControllerResponse> {
+	const methodLogger = Logger.forContext(
+		'controllers/reviewwebsite.controller.ts',
+		'extractLinks',
+	);
+
+	methodLogger.debug('Extracting links from URL', { url, extractOptions });
+
+	try {
+		const apiKey = getApiKey(options);
+		const result = await reviewWebsiteService.extractLinks(
+			url,
+			extractOptions,
+			apiKey,
+		);
+
+		return {
+			content: JSON.stringify(result, null, 2),
+		};
+	} catch (error) {
+		return handleControllerError(error, {
+			entityType: 'Links',
+			operation: 'extracting',
+			source: 'controllers/reviewwebsite.controller.ts@extractLinks',
+			additionalInfo: { url },
+		});
+	}
+}
+
+/**
+ * @function summarizeUrl
+ * @description Summarize a URL using AI
+ * @memberof ReviewWebsiteController
+ * @param {string} url - URL to summarize
+ * @param {SummarizeOptions} summarizeOptions - Summarization options
+ * @param {ReviewWebsiteOptions} options - Options including API key
+ * @returns {Promise<ControllerResponse>} A promise that resolves to the standard controller response
+ * @throws {McpError} Throws an McpError if the service call fails or returns an error
+ */
+async function summarizeUrl(
+	url: string,
+	summarizeOptions?: SummarizeOptions,
+	options: ReviewWebsiteOptions = {},
+): Promise<ControllerResponse> {
+	const methodLogger = Logger.forContext(
+		'controllers/reviewwebsite.controller.ts',
+		'summarizeUrl',
+	);
+
+	methodLogger.debug('Summarizing URL', { url, summarizeOptions });
+
+	try {
+		const apiKey = getApiKey(options);
+		const result = await reviewWebsiteService.summarizeUrl(
+			url,
+			summarizeOptions,
+			apiKey,
+		);
+
+		return {
+			content: JSON.stringify(result, null, 2),
+		};
+	} catch (error) {
+		return handleControllerError(error, {
+			entityType: 'Summary',
+			operation: 'creating',
+			source: 'controllers/reviewwebsite.controller.ts@summarizeUrl',
+			additionalInfo: { url },
+		});
+	}
+}
+
+/**
+ * @function summarizeWebsite
+ * @description Summarize a website (multiple pages) using AI
+ * @memberof ReviewWebsiteController
+ * @param {string} url - Main URL of the website to summarize
+ * @param {SummarizeOptions} summarizeOptions - Summarization options
+ * @param {ReviewWebsiteOptions} options - Options including API key
+ * @returns {Promise<ControllerResponse>} A promise that resolves to the standard controller response
+ * @throws {McpError} Throws an McpError if the service call fails or returns an error
+ */
+async function summarizeWebsite(
+	url: string,
+	summarizeOptions?: SummarizeOptions,
+	options: ReviewWebsiteOptions = {},
+): Promise<ControllerResponse> {
+	const methodLogger = Logger.forContext(
+		'controllers/reviewwebsite.controller.ts',
+		'summarizeWebsite',
+	);
+
+	methodLogger.debug('Summarizing website', { url, summarizeOptions });
+
+	try {
+		const apiKey = getApiKey(options);
+		const result = await reviewWebsiteService.summarizeWebsite(
+			url,
+			summarizeOptions,
+			apiKey,
+		);
+
+		return {
+			content: JSON.stringify(result, null, 2),
+		};
+	} catch (error) {
+		return handleControllerError(error, {
+			entityType: 'Website Summary',
+			operation: 'creating',
+			source: 'controllers/reviewwebsite.controller.ts@summarizeWebsite',
+			additionalInfo: { url },
+		});
+	}
+}
+
+/**
+ * @function summarizeMultipleUrls
+ * @description Summarize multiple URLs using AI
+ * @memberof ReviewWebsiteController
+ * @param {string[]} urls - URLs to summarize
+ * @param {SummarizeOptions} summarizeOptions - Summarization options
+ * @param {ReviewWebsiteOptions} options - Options including API key
+ * @returns {Promise<ControllerResponse>} A promise that resolves to the standard controller response
+ * @throws {McpError} Throws an McpError if the service call fails or returns an error
+ */
+async function summarizeMultipleUrls(
+	urls: string[],
+	summarizeOptions?: SummarizeOptions,
+	options: ReviewWebsiteOptions = {},
+): Promise<ControllerResponse> {
+	const methodLogger = Logger.forContext(
+		'controllers/reviewwebsite.controller.ts',
+		'summarizeMultipleUrls',
+	);
+
+	methodLogger.debug('Summarizing multiple URLs', { urls, summarizeOptions });
+
+	try {
+		const apiKey = getApiKey(options);
+		const result = await reviewWebsiteService.summarizeMultipleUrls(
+			urls,
+			summarizeOptions,
+			apiKey,
+		);
+
+		return {
+			content: JSON.stringify(result, null, 2),
+		};
+	} catch (error) {
+		return handleControllerError(error, {
+			entityType: 'Summaries',
+			operation: 'creating',
+			source: 'controllers/reviewwebsite.controller.ts@summarizeMultipleUrls',
+			additionalInfo: { urlCount: urls.length },
+		});
+	}
+}
+
+export default {
+	getAIModels,
+	createReview,
+	getReview,
+	listReviews,
+	updateReview,
+	deleteReview,
+	convertToMarkdown,
+	convertMultipleToMarkdown,
+	extractData,
+	extractDataMultiple,
+	scrapeUrl,
+	extractLinks,
+	summarizeUrl,
+	summarizeWebsite,
+	summarizeMultipleUrls,
+};
