@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/mrgoonie/reviewwebsite-mcp-server/compare/v1.0.0...v1.0.1) (2025-05-07)
+
+
+### Bug Fixes
+
+* **tools:** remove unnecesary tools ([adb5c85](https://github.com/mrgoonie/reviewwebsite-mcp-server/commit/adb5c85a21702b2356fb34d7969e6db91b445cba))
+
 # 1.0.0 (2025-05-06)
 
 
