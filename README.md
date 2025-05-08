@@ -2,6 +2,10 @@
 
 This project provides a Model Context Protocol (MCP) server that connects AI assistants to [ReviewWebsite.com](https://reviewweb.site) API to create and manage website reviews, extract data, convert URLs to markdown, and more.
 
+<a href="https://glama.ai/mcp/servers/@mrgoonie/reviewwebsite-mcp-server">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/@mrgoonie/reviewwebsite-mcp-server/badge" alt="ReviewWebsite Server MCP server" />
+</a>
+
 - [Github](https://github.com/mrgoonie/reviewwebsite-mcp-server)
 - [NPM](https://www.npmjs.com/package/reviewwebsite-mcp-server)
 
