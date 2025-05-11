@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/mrgoonie/reviewwebsite-mcp-server/compare/v1.0.1...v1.1.0) (2025-05-11)
+
+
+### Features
+
+* **url:** get final url, check url alive ([7c2d77c](https://github.com/mrgoonie/reviewwebsite-mcp-server/commit/7c2d77cdc58aef0762c68c7353103befaaee732a))
+
 ## [1.0.1](https://github.com/mrgoonie/reviewwebsite-mcp-server/compare/v1.0.0...v1.0.1) (2025-05-07)
 
 
