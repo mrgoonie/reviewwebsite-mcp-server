@@ -26,6 +26,10 @@ import {
 	SummarizeWebsiteToolArgsType,
 	SummarizeMultipleUrlsToolArgs,
 	SummarizeMultipleUrlsToolArgsType,
+	UrlIsAliveToolArgs,
+	UrlIsAliveToolArgsType,
+	UrlGetUrlAfterRedirectsToolArgs,
+	UrlGetUrlAfterRedirectsToolArgsType,
 } from './reviewwebsite.types.js';
 
 /**
@@ -442,6 +446,88 @@ async function handleSummarizeMultipleUrls(
 }
 
 /**
+ * @function handleIsUrlAlive
+ * @description MCP Tool handler to check if a URL is alive
+ * @param {UrlIsAliveToolArgsType} args - Arguments provided to the tool
+ * @returns {Promise<{ content: Array<{ type: 'text', text: string }> }>} Formatted response for the MCP
+ */
+async function handleIsUrlAlive(args: UrlIsAliveToolArgsType) {
+	const methodLogger = Logger.forContext(
+		'tools/reviewwebsite.tool.ts',
+		'handleIsUrlAlive',
+	);
+	methodLogger.debug(`Checking if URL is alive with options:`, {
+		...args,
+		api_key: args.api_key ? '[REDACTED]' : undefined,
+	});
+
+	try {
+		const result = await reviewWebsiteController.isUrlAlive(
+			args.url,
+			{
+				timeout: args.timeout,
+				proxyUrl: args.proxyUrl,
+			},
+			{
+				api_key: args.api_key,
+			},
+		);
+
+		return {
+			content: [
+				{
+					type: 'text' as const,
+					text: result.content,
+				},
+			],
+		};
+	} catch (error) {
+		methodLogger.error(`Error checking if URL is alive`, error);
+		return formatErrorForMcpTool(error);
+	}
+}
+
+/**
+ * @function handleGetUrlAfterRedirects
+ * @description MCP Tool handler to get URL after redirects
+ * @param {UrlGetUrlAfterRedirectsToolArgsType} args - Arguments provided to the tool
+ * @returns {Promise<{ content: Array<{ type: 'text', text: string }> }>} Formatted response for the MCP
+ */
+async function handleGetUrlAfterRedirects(
+	args: UrlGetUrlAfterRedirectsToolArgsType,
+) {
+	const methodLogger = Logger.forContext(
+		'tools/reviewwebsite.tool.ts',
+		'handleGetUrlAfterRedirects',
+	);
+	methodLogger.debug(`Getting URL after redirects:`, {
+		...args,
+		api_key: args.api_key ? '[REDACTED]' : undefined,
+	});
+
+	try {
+		const result = await reviewWebsiteController.getUrlAfterRedirects(
+			args.url,
+			{
+				api_key: args.api_key,
+			},
+		);
+
+		return {
+			content: [
+				{
+					type: 'text' as const,
+					text: result.content,
+				},
+			],
+		};
+	} catch (error) {
+		methodLogger.error(`Error getting URL after redirects`, error);
+		return formatErrorForMcpTool(error);
+	}
+}
+
+/**
  * @function register
  * @description Registers the ReviewWebsite tools with the MCP server
  * @param {McpServer} server - The MCP server instance
@@ -518,6 +604,21 @@ function register(server: McpServer) {
 		`Summarize multiple URLs using AI via ReviewWebsite API.`,
 		SummarizeMultipleUrlsToolArgs.shape,
 		handleSummarizeMultipleUrls,
+	);
+
+	// Register URL tools
+	server.tool(
+		'url_is_alive',
+		`Check if a URL is alive using ReviewWebsite API.`,
+		UrlIsAliveToolArgs.shape,
+		handleIsUrlAlive,
+	);
+
+	server.tool(
+		'url_get_after_redirects',
+		`Get URL after redirects using ReviewWebsite API.`,
+		UrlGetUrlAfterRedirectsToolArgs.shape,
+		handleGetUrlAfterRedirects,
 	);
 
 	methodLogger.debug('Successfully registered ReviewWebsite tools.');

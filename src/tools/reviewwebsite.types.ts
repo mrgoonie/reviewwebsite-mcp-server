@@ -330,6 +330,30 @@ export const SummarizeMultipleUrlsToolArgs = z.object({
 });
 
 /**
+ * Schema for URL is-alive tool arguments
+ */
+export const UrlIsAliveToolArgs = z.object({
+	url: z.string().describe("URL to check if it's alive"),
+	timeout: z
+		.number()
+		.optional()
+		.describe('Request timeout in milliseconds (default: 10000)'),
+	proxyUrl: z
+		.string()
+		.optional()
+		.describe('Proxy URL to use for the request'),
+	api_key: z.string().optional().describe('Your ReviewWebsite API key'),
+});
+
+/**
+ * Schema for URL get-url-after-redirects tool arguments
+ */
+export const UrlGetUrlAfterRedirectsToolArgs = z.object({
+	url: z.string().describe('URL to get after redirects'),
+	api_key: z.string().optional().describe('Your ReviewWebsite API key'),
+});
+
+/**
  * Type for ReviewWebsite tool arguments
  */
 export type CreateReviewToolArgsType = z.infer<typeof CreateReviewToolArgs>;
@@ -357,12 +381,24 @@ export type SummarizeWebsiteToolArgsType = z.infer<
 export type SummarizeMultipleUrlsToolArgsType = z.infer<
 	typeof SummarizeMultipleUrlsToolArgs
 >;
+export type UrlIsAliveToolArgsType = z.infer<typeof UrlIsAliveToolArgs>;
+export type UrlGetUrlAfterRedirectsToolArgsType = z.infer<
+	typeof UrlGetUrlAfterRedirectsToolArgs
+>;
 
 /**
  * Options for the ReviewWebsite controller
  */
 export interface ReviewWebsiteOptions {
 	api_key?: string;
+}
+
+/**
+ * URL is-alive options
+ */
+export interface UrlIsAliveOptions {
+	timeout?: number;
+	proxyUrl?: string;
 }
 
 /**
