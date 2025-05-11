@@ -14,6 +14,7 @@ import {
 	ExtractLinksOptions,
 	SummarizeOptions,
 	ReviewWebsiteOptions,
+	UrlIsAliveOptions,
 } from '../tools/reviewwebsite.types.js';
 
 /**
@@ -429,6 +430,89 @@ async function summarizeMultipleUrls(
 	}
 }
 
+/**
+ * @function isUrlAlive
+ * @description Check if a URL is alive
+ * @memberof ReviewWebsiteController
+ * @param {string} url - URL to check
+ * @param {UrlIsAliveOptions} options - Options for checking URL
+ * @param {ReviewWebsiteOptions} apiOptions - Options including API key
+ * @returns {Promise<ControllerResponse>} A promise that resolves to the standard controller response
+ * @throws {McpError} Throws an McpError if the service call fails or returns an error
+ */
+async function isUrlAlive(
+	url: string,
+	options?: UrlIsAliveOptions,
+	apiOptions: ReviewWebsiteOptions = {},
+): Promise<ControllerResponse> {
+	const methodLogger = Logger.forContext(
+		'controllers/reviewwebsite.controller.ts',
+		'isUrlAlive',
+	);
+
+	methodLogger.debug('Checking if URL is alive', { url, options });
+
+	try {
+		const apiKey = getApiKey(apiOptions);
+		const result = await reviewWebsiteService.isUrlAlive(
+			url,
+			options,
+			apiKey,
+		);
+
+		return {
+			content: JSON.stringify(result, null, 2),
+		};
+	} catch (error) {
+		return handleControllerError(error, {
+			entityType: 'URL',
+			operation: 'checking alive status',
+			source: 'controllers/reviewwebsite.controller.ts@isUrlAlive',
+			additionalInfo: { url },
+		});
+	}
+}
+
+/**
+ * @function getUrlAfterRedirects
+ * @description Get URL after redirects
+ * @memberof ReviewWebsiteController
+ * @param {string} url - URL to get after redirects
+ * @param {ReviewWebsiteOptions} apiOptions - Options including API key
+ * @returns {Promise<ControllerResponse>} A promise that resolves to the standard controller response
+ * @throws {McpError} Throws an McpError if the service call fails or returns an error
+ */
+async function getUrlAfterRedirects(
+	url: string,
+	apiOptions: ReviewWebsiteOptions = {},
+): Promise<ControllerResponse> {
+	const methodLogger = Logger.forContext(
+		'controllers/reviewwebsite.controller.ts',
+		'getUrlAfterRedirects',
+	);
+
+	methodLogger.debug('Getting URL after redirects', { url });
+
+	try {
+		const apiKey = getApiKey(apiOptions);
+		const result = await reviewWebsiteService.getUrlAfterRedirects(
+			url,
+			apiKey,
+		);
+
+		return {
+			content: JSON.stringify(result, null, 2),
+		};
+	} catch (error) {
+		return handleControllerError(error, {
+			entityType: 'URL',
+			operation: 'getting URL after redirects',
+			source: 'controllers/reviewwebsite.controller.ts@getUrlAfterRedirects',
+			additionalInfo: { url },
+		});
+	}
+}
+
 export default {
 	convertToMarkdown,
 	convertMultipleToMarkdown,
@@ -439,4 +523,6 @@ export default {
 	summarizeUrl,
 	summarizeWebsite,
 	summarizeMultipleUrls,
+	isUrlAlive,
+	getUrlAfterRedirects,
 };

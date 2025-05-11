@@ -227,6 +227,83 @@ function register(program: Command) {
 			}
 		});
 
+	// URL Is Alive Command
+	program
+		.command('url-is-alive')
+		.description('Check if a URL is alive')
+		.requiredOption('--url <url>', 'The URL to check')
+		.option(
+			'--timeout <ms>',
+			'Request timeout in milliseconds (default: 10000)',
+			parseInt,
+		)
+		.option('--proxy-url <url>', 'Proxy URL to use for the request')
+		.option('--api-key <apiKey>', 'Your ReviewWebsite API key')
+		.action(async (options) => {
+			const commandLogger = Logger.forContext(
+				'cli/reviewwebsite.cli.ts',
+				'url-is-alive',
+			);
+			try {
+				commandLogger.debug('CLI url-is-alive called', {
+					...options,
+					api_key: options.apiKey ? '[REDACTED]' : undefined,
+				});
+
+				const apiKey =
+					options.apiKey || config.get('REVIEWWEBSITE_API_KEY');
+
+				const result = await reviewWebsiteController.isUrlAlive(
+					options.url,
+					{
+						timeout: options.timeout,
+						proxyUrl: options.proxyUrl,
+					},
+					{
+						api_key: apiKey,
+					},
+				);
+
+				console.log(result.content);
+			} catch (error) {
+				handleCliError(error);
+			}
+		});
+
+	// URL Get After Redirects Command
+	program
+		.command('url-get-after-redirects')
+		.description('Get URL after redirects')
+		.requiredOption('--url <url>', 'The URL to get after redirects')
+		.option('--api-key <apiKey>', 'Your ReviewWebsite API key')
+		.action(async (options) => {
+			const commandLogger = Logger.forContext(
+				'cli/reviewwebsite.cli.ts',
+				'url-get-after-redirects',
+			);
+			try {
+				commandLogger.debug('CLI url-get-after-redirects called', {
+					...options,
+					api_key: options.apiKey ? '[REDACTED]' : undefined,
+				});
+
+				const apiKey =
+					options.apiKey || config.get('REVIEWWEBSITE_API_KEY');
+
+				const result =
+					await reviewWebsiteController.getUrlAfterRedirects(
+						options.url,
+						{
+							api_key: apiKey,
+						},
+					);
+
+				console.log(result.content);
+			} catch (error) {
+				handleCliError(error);
+			}
+		});
+
 	cliLogger.debug('ReviewWebsite CLI commands registered successfully');
 }
 

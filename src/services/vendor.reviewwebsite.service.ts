@@ -11,6 +11,7 @@ import {
 	ExtractDataOptions,
 	ExtractLinksOptions,
 	SummarizeOptions,
+	UrlIsAliveOptions,
 } from '../tools/reviewwebsite.types.js';
 
 const BASE_URL = 'https://reviewweb.site';
@@ -470,6 +471,93 @@ function handleApiError(error: any, method: string): never {
 	);
 }
 
+/**
+ * @function isUrlAlive
+ * @description Check if a URL is alive
+ * @memberof ReviewWebsiteService
+ * @param {string} url - URL to check
+ * @param {UrlIsAliveOptions} options - Options for checking URL
+ * @param {string} apiKey - ReviewWebsite API key
+ * @returns {Promise<any>} Response from the ReviewWebsite API
+ * @throws {McpError} If the API request fails
+ */
+async function isUrlAlive(
+	url: string,
+	options?: UrlIsAliveOptions,
+	apiKey?: string,
+): Promise<any> {
+	const methodLogger = Logger.forContext(
+		'services/vendor.reviewwebsite.service.ts',
+		'isUrlAlive',
+	);
+
+	try {
+		methodLogger.debug('Checking if URL is alive', { url, options });
+
+		// Build query parameters
+		const params = new URLSearchParams();
+		params.append('url', url);
+
+		if (options?.timeout) {
+			params.append('timeout', options.timeout.toString());
+		}
+
+		if (options?.proxyUrl) {
+			params.append('proxyUrl', options.proxyUrl);
+		}
+
+		const response = await axios.get(`${API_BASE}/url/is-alive`, {
+			params,
+			headers: getHeaders(apiKey),
+		});
+
+		methodLogger.debug('Successfully checked if URL is alive');
+		return response.data;
+	} catch (error) {
+		return handleApiError(error, 'isUrlAlive');
+	}
+}
+
+/**
+ * @function getUrlAfterRedirects
+ * @description Get URL after redirects
+ * @memberof ReviewWebsiteService
+ * @param {string} url - URL to get after redirects
+ * @param {string} apiKey - ReviewWebsite API key
+ * @returns {Promise<any>} Response from the ReviewWebsite API
+ * @throws {McpError} If the API request fails
+ */
+async function getUrlAfterRedirects(
+	url: string,
+	apiKey?: string,
+): Promise<any> {
+	const methodLogger = Logger.forContext(
+		'services/vendor.reviewwebsite.service.ts',
+		'getUrlAfterRedirects',
+	);
+
+	try {
+		methodLogger.debug('Getting URL after redirects', { url });
+
+		// Build query parameters
+		const params = new URLSearchParams();
+		params.append('url', url);
+
+		const response = await axios.get(
+			`${API_BASE}/url/get-url-after-redirects`,
+			{
+				params,
+				headers: getHeaders(apiKey),
+			},
+		);
+
+		methodLogger.debug('Successfully got URL after redirects');
+		return response.data;
+	} catch (error) {
+		return handleApiError(error, 'getUrlAfterRedirects');
+	}
+}
+
 export default {
 	convertToMarkdown,
 	convertMultipleToMarkdown,
@@ -480,4 +568,6 @@ export default {
 	summarizeUrl,
 	summarizeWebsite,
 	summarizeMultipleUrls,
+	isUrlAlive,
+	getUrlAfterRedirects,
 };
