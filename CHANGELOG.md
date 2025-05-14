@@ -1,3 +1,15 @@
+# [1.2.0](https://github.com/mrgoonie/reviewwebsite-mcp-server/compare/v1.1.0...v1.2.0) (2025-05-14)
+
+
+### Bug Fixes
+
+* **tools:** improve tool's descriptions ([eb588bf](https://github.com/mrgoonie/reviewwebsite-mcp-server/commit/eb588bf0fbd7809d52e899d8ee65a30945353d80))
+
+
+### Features
+
+* **tools:** seo insights ([975ead4](https://github.com/mrgoonie/reviewwebsite-mcp-server/commit/975ead420bb3cadba925f4a8a024849c31da0d33))
+
 # [1.1.0](https://github.com/mrgoonie/reviewwebsite-mcp-server/compare/v1.0.1...v1.1.0) (2025-05-11)
 
 
