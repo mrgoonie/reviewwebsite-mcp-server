@@ -304,6 +304,170 @@ function register(program: Command) {
 			}
 		});
 
+	// SEO Keyword Ideas Command
+	program
+		.command('seo-keyword-ideas')
+		.description('Get keyword ideas for a keyword')
+		.requiredOption('--keyword <keyword>', 'The keyword to get ideas for')
+		.option('--country <country>', 'Country code (default: us)')
+		.option(
+			'--search-engine <searchEngine>',
+			'Search engine to use (default: Google)',
+		)
+		.option('--api-key <apiKey>', 'Your ReviewWebsite API key')
+		.action(async (options) => {
+			const commandLogger = Logger.forContext(
+				'cli/reviewwebsite.cli.ts',
+				'seo-keyword-ideas',
+			);
+			try {
+				commandLogger.debug('CLI seo-keyword-ideas called', {
+					...options,
+					api_key: options.apiKey ? '[REDACTED]' : undefined,
+				});
+
+				const apiKey =
+					options.apiKey || config.get('REVIEWWEBSITE_API_KEY');
+
+				const result = await reviewWebsiteController.getKeywordIdeas(
+					options.keyword,
+					{
+						country: options.country,
+						searchEngine: options.searchEngine,
+					},
+					{
+						api_key: apiKey,
+					},
+				);
+
+				console.log(result.content);
+			} catch (error) {
+				handleCliError(error);
+			}
+		});
+
+	// SEO Keyword Difficulty Command
+	program
+		.command('seo-keyword-difficulty')
+		.description('Get keyword difficulty for a keyword')
+		.requiredOption(
+			'--keyword <keyword>',
+			'The keyword to check difficulty for',
+		)
+		.option('--country <country>', 'Country code (default: us)')
+		.option('--api-key <apiKey>', 'Your ReviewWebsite API key')
+		.action(async (options) => {
+			const commandLogger = Logger.forContext(
+				'cli/reviewwebsite.cli.ts',
+				'seo-keyword-difficulty',
+			);
+			try {
+				commandLogger.debug('CLI seo-keyword-difficulty called', {
+					...options,
+					api_key: options.apiKey ? '[REDACTED]' : undefined,
+				});
+
+				const apiKey =
+					options.apiKey || config.get('REVIEWWEBSITE_API_KEY');
+
+				const result =
+					await reviewWebsiteController.getKeywordDifficulty(
+						options.keyword,
+						{
+							country: options.country,
+						},
+						{
+							api_key: apiKey,
+						},
+					);
+
+				console.log(result.content);
+			} catch (error) {
+				handleCliError(error);
+			}
+		});
+
+	// SEO Traffic Command
+	program
+		.command('seo-traffic')
+		.description('Check traffic for a domain or URL')
+		.requiredOption(
+			'--domain-or-url <domainOrUrl>',
+			'The domain or URL to check traffic for',
+		)
+		.option(
+			'--mode <mode>',
+			'Mode to use (subdomains or exact, default: subdomains)',
+		)
+		.option('--country <country>', 'Country code')
+		.option('--api-key <apiKey>', 'Your ReviewWebsite API key')
+		.action(async (options) => {
+			const commandLogger = Logger.forContext(
+				'cli/reviewwebsite.cli.ts',
+				'seo-traffic',
+			);
+			try {
+				commandLogger.debug('CLI seo-traffic called', {
+					...options,
+					api_key: options.apiKey ? '[REDACTED]' : undefined,
+				});
+
+				const apiKey =
+					options.apiKey || config.get('REVIEWWEBSITE_API_KEY');
+
+				const result = await reviewWebsiteController.getTraffic(
+					options.domainOrUrl,
+					{
+						mode: options.mode as
+							| 'subdomains'
+							| 'exact'
+							| undefined,
+						country: options.country,
+					},
+					{
+						api_key: apiKey,
+					},
+				);
+
+				console.log(result.content);
+			} catch (error) {
+				handleCliError(error);
+			}
+		});
+
+	// SEO Backlinks Command
+	program
+		.command('seo-backlinks')
+		.description('Get backlinks for a domain')
+		.requiredOption('--domain <domain>', 'The domain to get backlinks for')
+		.option('--api-key <apiKey>', 'Your ReviewWebsite API key')
+		.action(async (options) => {
+			const commandLogger = Logger.forContext(
+				'cli/reviewwebsite.cli.ts',
+				'seo-backlinks',
+			);
+			try {
+				commandLogger.debug('CLI seo-backlinks called', {
+					...options,
+					api_key: options.apiKey ? '[REDACTED]' : undefined,
+				});
+
+				const apiKey =
+					options.apiKey || config.get('REVIEWWEBSITE_API_KEY');
+
+				const result = await reviewWebsiteController.getBacklinks(
+					options.domain,
+					{
+						api_key: apiKey,
+					},
+				);
+
+				console.log(result.content);
+			} catch (error) {
+				handleCliError(error);
+			}
+		});
+
 	cliLogger.debug('ReviewWebsite CLI commands registered successfully');
 }
 

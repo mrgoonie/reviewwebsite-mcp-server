@@ -15,6 +15,9 @@ import {
 	SummarizeOptions,
 	ReviewWebsiteOptions,
 	UrlIsAliveOptions,
+	SeoKeywordIdeasOptions,
+	SeoKeywordDifficultyOptions,
+	SeoTrafficOptions,
 } from '../tools/reviewwebsite.types.js';
 
 /**
@@ -513,6 +516,172 @@ async function getUrlAfterRedirects(
 	}
 }
 
+/**
+ * @function getKeywordIdeas
+ * @description Get keyword ideas for a keyword
+ * @memberof ReviewWebsiteController
+ * @param {string} keyword - Keyword to get ideas for
+ * @param {SeoKeywordIdeasOptions} options - Options for keyword ideas
+ * @param {ReviewWebsiteOptions} apiOptions - Options including API key
+ * @returns {Promise<ControllerResponse>} A promise that resolves to the standard controller response
+ * @throws {McpError} Throws an McpError if the service call fails or returns an error
+ */
+async function getKeywordIdeas(
+	keyword: string,
+	options?: SeoKeywordIdeasOptions,
+	apiOptions: ReviewWebsiteOptions = {},
+): Promise<ControllerResponse> {
+	const methodLogger = Logger.forContext(
+		'controllers/reviewwebsite.controller.ts',
+		'getKeywordIdeas',
+	);
+
+	methodLogger.debug('Getting keyword ideas', { keyword, options });
+
+	try {
+		const apiKey = getApiKey(apiOptions);
+		const result = await reviewWebsiteService.getKeywordIdeas(
+			keyword,
+			options,
+			apiKey,
+		);
+
+		return {
+			content: JSON.stringify(result, null, 2),
+		};
+	} catch (error) {
+		return handleControllerError(error, {
+			entityType: 'Keyword Ideas',
+			operation: 'retrieving',
+			source: 'controllers/reviewwebsite.controller.ts@getKeywordIdeas',
+			additionalInfo: { keyword },
+		});
+	}
+}
+
+/**
+ * @function getKeywordDifficulty
+ * @description Get keyword difficulty for a keyword
+ * @memberof ReviewWebsiteController
+ * @param {string} keyword - Keyword to check difficulty for
+ * @param {SeoKeywordDifficultyOptions} options - Options for keyword difficulty
+ * @param {ReviewWebsiteOptions} apiOptions - Options including API key
+ * @returns {Promise<ControllerResponse>} A promise that resolves to the standard controller response
+ * @throws {McpError} Throws an McpError if the service call fails or returns an error
+ */
+async function getKeywordDifficulty(
+	keyword: string,
+	options?: SeoKeywordDifficultyOptions,
+	apiOptions: ReviewWebsiteOptions = {},
+): Promise<ControllerResponse> {
+	const methodLogger = Logger.forContext(
+		'controllers/reviewwebsite.controller.ts',
+		'getKeywordDifficulty',
+	);
+
+	methodLogger.debug('Getting keyword difficulty', { keyword, options });
+
+	try {
+		const apiKey = getApiKey(apiOptions);
+		const result = await reviewWebsiteService.getKeywordDifficulty(
+			keyword,
+			options,
+			apiKey,
+		);
+
+		return {
+			content: JSON.stringify(result, null, 2),
+		};
+	} catch (error) {
+		return handleControllerError(error, {
+			entityType: 'Keyword Difficulty',
+			operation: 'retrieving',
+			source: 'controllers/reviewwebsite.controller.ts@getKeywordDifficulty',
+			additionalInfo: { keyword },
+		});
+	}
+}
+
+/**
+ * @function getTraffic
+ * @description Check traffic for a domain or URL
+ * @memberof ReviewWebsiteController
+ * @param {string} domainOrUrl - Domain or URL to check traffic for
+ * @param {SeoTrafficOptions} options - Options for traffic check
+ * @param {ReviewWebsiteOptions} apiOptions - Options including API key
+ * @returns {Promise<ControllerResponse>} A promise that resolves to the standard controller response
+ * @throws {McpError} Throws an McpError if the service call fails or returns an error
+ */
+async function getTraffic(
+	domainOrUrl: string,
+	options?: SeoTrafficOptions,
+	apiOptions: ReviewWebsiteOptions = {},
+): Promise<ControllerResponse> {
+	const methodLogger = Logger.forContext(
+		'controllers/reviewwebsite.controller.ts',
+		'getTraffic',
+	);
+
+	methodLogger.debug('Checking traffic', { domainOrUrl, options });
+
+	try {
+		const apiKey = getApiKey(apiOptions);
+		const result = await reviewWebsiteService.getTraffic(
+			domainOrUrl,
+			options,
+			apiKey,
+		);
+
+		return {
+			content: JSON.stringify(result, null, 2),
+		};
+	} catch (error) {
+		return handleControllerError(error, {
+			entityType: 'Traffic Data',
+			operation: 'retrieving',
+			source: 'controllers/reviewwebsite.controller.ts@getTraffic',
+			additionalInfo: { domainOrUrl },
+		});
+	}
+}
+
+/**
+ * @function getBacklinks
+ * @description Get backlinks for a domain
+ * @memberof ReviewWebsiteController
+ * @param {string} domain - Domain to get backlinks for
+ * @param {ReviewWebsiteOptions} apiOptions - Options including API key
+ * @returns {Promise<ControllerResponse>} A promise that resolves to the standard controller response
+ * @throws {McpError} Throws an McpError if the service call fails or returns an error
+ */
+async function getBacklinks(
+	domain: string,
+	apiOptions: ReviewWebsiteOptions = {},
+): Promise<ControllerResponse> {
+	const methodLogger = Logger.forContext(
+		'controllers/reviewwebsite.controller.ts',
+		'getBacklinks',
+	);
+
+	methodLogger.debug('Getting backlinks for domain', { domain });
+
+	try {
+		const apiKey = getApiKey(apiOptions);
+		const result = await reviewWebsiteService.getBacklinks(domain, apiKey);
+
+		return {
+			content: JSON.stringify(result, null, 2),
+		};
+	} catch (error) {
+		return handleControllerError(error, {
+			entityType: 'Backlinks Data',
+			operation: 'retrieving',
+			source: 'controllers/reviewwebsite.controller.ts@getBacklinks',
+			additionalInfo: { domain },
+		});
+	}
+}
+
 export default {
 	convertToMarkdown,
 	convertMultipleToMarkdown,
@@ -525,4 +694,8 @@ export default {
 	summarizeMultipleUrls,
 	isUrlAlive,
 	getUrlAfterRedirects,
+	getKeywordIdeas,
+	getKeywordDifficulty,
+	getTraffic,
+	getBacklinks,
 };
