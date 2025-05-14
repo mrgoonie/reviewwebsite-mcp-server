@@ -1,6 +1,6 @@
 /**
  * @file reviewwebsite.tool.ts
- * @description Tool definitions for the ReviewWebsite API
+ * @description Tool definitions for the ReviewWeb.site API
  */
 
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
@@ -529,7 +529,7 @@ async function handleGetUrlAfterRedirects(
 
 /**
  * @function register
- * @description Registers the ReviewWebsite tools with the MCP server
+ * @description Registers the ReviewWeb.site tools with the MCP server
  * @param {McpServer} server - The MCP server instance
  */
 function register(server: McpServer) {
@@ -537,19 +537,21 @@ function register(server: McpServer) {
 		'tools/reviewwebsite.tool.ts',
 		'register',
 	);
-	methodLogger.debug(`Registering ReviewWebsite tools...`);
+	methodLogger.debug(`Registering ReviewWeb.site tools...`);
 
 	// Register convert to markdown tools
 	server.tool(
 		'convert_to_markdown',
-		`Convert a URL to Markdown using AI via ReviewWebsite API.`,
+		`Convert a URL to Markdown using AI via ReviewWeb.site API.
+		Turn a web page into LLM-friendly content.`,
 		ConvertToMarkdownToolArgs.shape,
 		handleConvertToMarkdown,
 	);
 
 	server.tool(
 		'convert_multiple_to_markdown',
-		`Convert multiple URLs to Markdown using AI via ReviewWebsite API.`,
+		`Convert multiple URLs to Markdown using AI via ReviewWeb.site API.
+		Turn multiple web pages into LLM-friendly content.`,
 		ConvertMultipleToMarkdownToolArgs.shape,
 		handleConvertMultipleToMarkdown,
 	);
@@ -557,14 +559,14 @@ function register(server: McpServer) {
 	// Register extract data tools
 	server.tool(
 		'extract_data',
-		`Extract structured data from a URL using AI via ReviewWebsite API.`,
+		`Extract structured data (JSON) from a web page URL using AI via ReviewWeb.site API.`,
 		ExtractDataToolArgs.shape,
 		handleExtractData,
 	);
 
 	server.tool(
 		'extract_data_multiple',
-		`Extract structured data from multiple URLs using AI via ReviewWebsite API.`,
+		`Extract structured data (JSON) from multiple web page URLs using AI via ReviewWeb.site API.`,
 		ExtractDataMultipleToolArgs.shape,
 		handleExtractDataMultiple,
 	);
@@ -572,14 +574,14 @@ function register(server: McpServer) {
 	// Register scrape tools
 	server.tool(
 		'scrape_url',
-		`Scrape a URL using ReviewWebsite API.`,
+		`Scrape a URL and return HTML content using ReviewWeb.site API.`,
 		ScrapeUrlToolArgs.shape,
 		handleScrapeUrl,
 	);
 
 	server.tool(
 		'extract_links',
-		`Extract links from a URL using ReviewWebsite API.`,
+		`Extract all links from a HTML content of web page URL using ReviewWeb.site API.`,
 		ExtractLinksToolArgs.shape,
 		handleExtractLinks,
 	);
@@ -587,21 +589,21 @@ function register(server: McpServer) {
 	// Register summarize tools
 	server.tool(
 		'summarize_url',
-		`Summarize a URL using AI via ReviewWebsite API.`,
+		`Summarize a web page URL using AI via ReviewWeb.site API.`,
 		SummarizeUrlToolArgs.shape,
 		handleSummarizeUrl,
 	);
 
 	server.tool(
 		'summarize_website',
-		`Summarize a website (multiple pages) using AI via ReviewWebsite API.`,
+		`Summarize a website (and its internal links) using AI via ReviewWeb.site API.`,
 		SummarizeWebsiteToolArgs.shape,
 		handleSummarizeWebsite,
 	);
 
 	server.tool(
 		'summarize_multiple_urls',
-		`Summarize multiple URLs using AI via ReviewWebsite API.`,
+		`Summarize multiple web page URLs using AI via ReviewWeb.site API.`,
 		SummarizeMultipleUrlsToolArgs.shape,
 		handleSummarizeMultipleUrls,
 	);
@@ -609,19 +611,19 @@ function register(server: McpServer) {
 	// Register URL tools
 	server.tool(
 		'url_is_alive',
-		`Check if a URL is alive using ReviewWebsite API.`,
+		`Check if a URL is alive using ReviewWeb.site API.`,
 		UrlIsAliveToolArgs.shape,
 		handleIsUrlAlive,
 	);
 
 	server.tool(
 		'url_get_after_redirects',
-		`Get URL after redirects using ReviewWebsite API.`,
+		`Get URL after redirects using ReviewWeb.site API.`,
 		UrlGetUrlAfterRedirectsToolArgs.shape,
 		handleGetUrlAfterRedirects,
 	);
 
-	methodLogger.debug('Successfully registered ReviewWebsite tools.');
+	methodLogger.debug('Successfully registered ReviewWeb.site tools.');
 }
 
 export default { register };
