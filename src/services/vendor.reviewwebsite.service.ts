@@ -12,6 +12,9 @@ import {
 	ExtractLinksOptions,
 	SummarizeOptions,
 	UrlIsAliveOptions,
+	SeoKeywordIdeasOptions,
+	SeoKeywordDifficultyOptions,
+	SeoTrafficOptions,
 } from '../tools/reviewwebsite.types.js';
 
 const BASE_URL = 'https://reviewweb.site';
@@ -558,6 +561,166 @@ async function getUrlAfterRedirects(
 	}
 }
 
+/**
+ * @function getKeywordIdeas
+ * @description Get keyword ideas for a keyword
+ * @memberof ReviewWebsiteService
+ * @param {string} keyword - Keyword to get ideas for
+ * @param {SeoKeywordIdeasOptions} options - Options for keyword ideas
+ * @param {string} apiKey - ReviewWebsite API key
+ * @returns {Promise<any>} Response from the ReviewWebsite API
+ * @throws {McpError} If the API request fails
+ */
+async function getKeywordIdeas(
+	keyword: string,
+	options?: SeoKeywordIdeasOptions,
+	apiKey?: string,
+): Promise<any> {
+	const methodLogger = Logger.forContext(
+		'services/vendor.reviewwebsite.service.ts',
+		'getKeywordIdeas',
+	);
+
+	try {
+		methodLogger.debug('Getting keyword ideas', { keyword, options });
+
+		const response = await axios.post(
+			`${API_BASE}/seo-insights/keyword-ideas`,
+			{
+				keyword,
+				country: options?.country,
+				searchEngine: options?.searchEngine,
+			},
+			{
+				headers: getHeaders(apiKey),
+			},
+		);
+
+		methodLogger.debug('Successfully got keyword ideas');
+		return response.data;
+	} catch (error) {
+		return handleApiError(error, 'getKeywordIdeas');
+	}
+}
+
+/**
+ * @function getKeywordDifficulty
+ * @description Get keyword difficulty for a keyword
+ * @memberof ReviewWebsiteService
+ * @param {string} keyword - Keyword to check difficulty for
+ * @param {SeoKeywordDifficultyOptions} options - Options for keyword difficulty
+ * @param {string} apiKey - ReviewWebsite API key
+ * @returns {Promise<any>} Response from the ReviewWebsite API
+ * @throws {McpError} If the API request fails
+ */
+async function getKeywordDifficulty(
+	keyword: string,
+	options?: SeoKeywordDifficultyOptions,
+	apiKey?: string,
+): Promise<any> {
+	const methodLogger = Logger.forContext(
+		'services/vendor.reviewwebsite.service.ts',
+		'getKeywordDifficulty',
+	);
+
+	try {
+		methodLogger.debug('Getting keyword difficulty', { keyword, options });
+
+		const response = await axios.post(
+			`${API_BASE}/seo-insights/keyword-difficulty`,
+			{
+				keyword,
+				country: options?.country,
+			},
+			{
+				headers: getHeaders(apiKey),
+			},
+		);
+
+		methodLogger.debug('Successfully got keyword difficulty');
+		return response.data;
+	} catch (error) {
+		return handleApiError(error, 'getKeywordDifficulty');
+	}
+}
+
+/**
+ * @function getTraffic
+ * @description Check traffic for a domain or URL
+ * @memberof ReviewWebsiteService
+ * @param {string} domainOrUrl - Domain or URL to check traffic for
+ * @param {SeoTrafficOptions} options - Options for traffic check
+ * @param {string} apiKey - ReviewWebsite API key
+ * @returns {Promise<any>} Response from the ReviewWebsite API
+ * @throws {McpError} If the API request fails
+ */
+async function getTraffic(
+	domainOrUrl: string,
+	options?: SeoTrafficOptions,
+	apiKey?: string,
+): Promise<any> {
+	const methodLogger = Logger.forContext(
+		'services/vendor.reviewwebsite.service.ts',
+		'getTraffic',
+	);
+
+	try {
+		methodLogger.debug('Checking traffic', { domainOrUrl, options });
+
+		const response = await axios.post(
+			`${API_BASE}/seo-insights/traffic`,
+			{
+				domainOrUrl,
+				mode: options?.mode,
+				country: options?.country,
+			},
+			{
+				headers: getHeaders(apiKey),
+			},
+		);
+
+		methodLogger.debug('Successfully checked traffic');
+		return response.data;
+	} catch (error) {
+		return handleApiError(error, 'getTraffic');
+	}
+}
+
+/**
+ * @function getBacklinks
+ * @description Get backlinks for a domain
+ * @memberof ReviewWebsiteService
+ * @param {string} domain - Domain to get backlinks for
+ * @param {string} apiKey - ReviewWebsite API key
+ * @returns {Promise<any>} Response from the ReviewWebsite API
+ * @throws {McpError} If the API request fails
+ */
+async function getBacklinks(domain: string, apiKey?: string): Promise<any> {
+	const methodLogger = Logger.forContext(
+		'services/vendor.reviewwebsite.service.ts',
+		'getBacklinks',
+	);
+
+	try {
+		methodLogger.debug('Getting backlinks for domain', { domain });
+
+		const response = await axios.post(
+			`${API_BASE}/seo-insights/backlinks`,
+			{
+				domain,
+			},
+			{
+				headers: getHeaders(apiKey),
+			},
+		);
+
+		methodLogger.debug('Successfully got backlinks for domain');
+		return response.data;
+	} catch (error) {
+		return handleApiError(error, 'getBacklinks');
+	}
+}
+
 export default {
 	convertToMarkdown,
 	convertMultipleToMarkdown,
@@ -570,4 +733,8 @@ export default {
 	summarizeMultipleUrls,
 	isUrlAlive,
 	getUrlAfterRedirects,
+	getKeywordIdeas,
+	getKeywordDifficulty,
+	getTraffic,
+	getBacklinks,
 };

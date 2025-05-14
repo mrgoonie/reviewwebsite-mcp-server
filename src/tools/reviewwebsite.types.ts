@@ -354,6 +354,49 @@ export const UrlGetUrlAfterRedirectsToolArgs = z.object({
 });
 
 /**
+ * Schema for SEO keyword ideas tool arguments
+ */
+export const SeoKeywordIdeasToolArgs = z.object({
+	keyword: z.string().describe('The keyword to get ideas for'),
+	country: z.string().optional().describe('Country code (default: us)'),
+	searchEngine: z
+		.string()
+		.optional()
+		.describe('Search engine to use (default: Google)'),
+	api_key: z.string().optional().describe('Your ReviewWebsite API key'),
+});
+
+/**
+ * Schema for SEO keyword difficulty tool arguments
+ */
+export const SeoKeywordDifficultyToolArgs = z.object({
+	keyword: z.string().describe('The keyword to check difficulty for'),
+	country: z.string().optional().describe('Country code (default: us)'),
+	api_key: z.string().optional().describe('Your ReviewWebsite API key'),
+});
+
+/**
+ * Schema for SEO traffic tool arguments
+ */
+export const SeoTrafficToolArgs = z.object({
+	domainOrUrl: z.string().describe('The domain or URL to check traffic for'),
+	mode: z
+		.enum(['subdomains', 'exact'])
+		.optional()
+		.describe('Mode to use (default: subdomains)'),
+	country: z.string().optional().describe('Country code (default: None)'),
+	api_key: z.string().optional().describe('Your ReviewWebsite API key'),
+});
+
+/**
+ * Schema for SEO backlinks tool arguments
+ */
+export const SeoBacklinksToolArgs = z.object({
+	domain: z.string().describe('The domain to get backlinks for'),
+	api_key: z.string().optional().describe('Your ReviewWebsite API key'),
+});
+
+/**
  * Type for ReviewWebsite tool arguments
  */
 export type CreateReviewToolArgsType = z.infer<typeof CreateReviewToolArgs>;
@@ -385,6 +428,14 @@ export type UrlIsAliveToolArgsType = z.infer<typeof UrlIsAliveToolArgs>;
 export type UrlGetUrlAfterRedirectsToolArgsType = z.infer<
 	typeof UrlGetUrlAfterRedirectsToolArgs
 >;
+export type SeoKeywordIdeasToolArgsType = z.infer<
+	typeof SeoKeywordIdeasToolArgs
+>;
+export type SeoKeywordDifficultyToolArgsType = z.infer<
+	typeof SeoKeywordDifficultyToolArgs
+>;
+export type SeoTrafficToolArgsType = z.infer<typeof SeoTrafficToolArgs>;
+export type SeoBacklinksToolArgsType = z.infer<typeof SeoBacklinksToolArgs>;
 
 /**
  * Options for the ReviewWebsite controller
@@ -459,4 +510,34 @@ export interface SummarizeOptions {
 	maxLength?: number;
 	format?: 'bullet' | 'paragraph';
 	debug?: boolean;
+}
+
+/**
+ * SEO keyword ideas options
+ */
+export interface SeoKeywordIdeasOptions {
+	country?: string;
+	searchEngine?: string;
+}
+
+/**
+ * SEO keyword difficulty options
+ */
+export interface SeoKeywordDifficultyOptions {
+	country?: string;
+}
+
+/**
+ * SEO traffic options
+ */
+export interface SeoTrafficOptions {
+	mode?: 'subdomains' | 'exact';
+	country?: string;
+}
+
+/**
+ * SEO backlinks options
+ */
+export interface SeoBacklinksOptions {
+	domain: string;
 }

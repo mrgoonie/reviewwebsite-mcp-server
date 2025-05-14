@@ -13,6 +13,7 @@ This project provides a Model Context Protocol (MCP) server that connects AI ass
 - [x] Scrape URLs and extract content
 - [x] Extract links from websites
 - [x] Summarize URLs and websites using AI
+- [x] SEO insights (keyword ideas, keyword difficulty, traffic analysis, backlinks)
 - [x] Customize AI models and parameters
 - [x] Control wait behavior and timing
 
@@ -68,6 +69,18 @@ npm run dev:cli -- extract-links --url "https://example.com" --type "all" --api-
 
 # Summarize URL
 npm run dev:cli -- summarize-url --url "https://example.com" --model "gpt-4o" --api-key "your-api-key"
+
+# Get keyword ideas for SEO
+npm run dev:cli -- seo-keyword-ideas --keyword "digital marketing" --country "us" --search-engine "Google" --api-key "your-api-key"
+
+# Check keyword difficulty
+npm run dev:cli -- seo-keyword-difficulty --keyword "digital marketing" --country "us" --api-key "your-api-key"
+
+# Analyze website traffic
+npm run dev:cli -- seo-traffic --domain-or-url "example.com" --mode "subdomains" --country "us" --api-key "your-api-key"
+
+# Get backlinks for a domain
+npm run dev:cli -- seo-backlinks --domain "example.com" --api-key "your-api-key"
 ```
 
 ### MCP Setup

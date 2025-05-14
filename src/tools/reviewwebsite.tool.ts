@@ -30,6 +30,14 @@ import {
 	UrlIsAliveToolArgsType,
 	UrlGetUrlAfterRedirectsToolArgs,
 	UrlGetUrlAfterRedirectsToolArgsType,
+	SeoKeywordIdeasToolArgs,
+	SeoKeywordIdeasToolArgsType,
+	SeoKeywordDifficultyToolArgs,
+	SeoKeywordDifficultyToolArgsType,
+	SeoTrafficToolArgs,
+	SeoTrafficToolArgsType,
+	SeoBacklinksToolArgs,
+	SeoBacklinksToolArgsType,
 } from './reviewwebsite.types.js';
 
 /**
@@ -528,6 +536,168 @@ async function handleGetUrlAfterRedirects(
 }
 
 /**
+ * @function handleGetKeywordIdeas
+ * @description MCP Tool handler to get keyword ideas for a keyword
+ * @param {SeoKeywordIdeasToolArgsType} args - Arguments provided to the tool
+ * @returns {Promise<{ content: Array<{ type: 'text', text: string }> }>} Formatted response for the MCP
+ */
+async function handleGetKeywordIdeas(args: SeoKeywordIdeasToolArgsType) {
+	const methodLogger = Logger.forContext(
+		'tools/reviewwebsite.tool.ts',
+		'handleGetKeywordIdeas',
+	);
+	methodLogger.debug(`Getting keyword ideas:`, {
+		...args,
+		api_key: args.api_key ? '[REDACTED]' : undefined,
+	});
+
+	try {
+		const result = await reviewWebsiteController.getKeywordIdeas(
+			args.keyword,
+			{
+				country: args.country,
+				searchEngine: args.searchEngine,
+			},
+			{
+				api_key: args.api_key,
+			},
+		);
+
+		return {
+			content: [
+				{
+					type: 'text' as const,
+					text: result.content,
+				},
+			],
+		};
+	} catch (error) {
+		methodLogger.error(`Error getting keyword ideas`, error);
+		return formatErrorForMcpTool(error);
+	}
+}
+
+/**
+ * @function handleGetKeywordDifficulty
+ * @description MCP Tool handler to get keyword difficulty for a keyword
+ * @param {SeoKeywordDifficultyToolArgsType} args - Arguments provided to the tool
+ * @returns {Promise<{ content: Array<{ type: 'text', text: string }> }>} Formatted response for the MCP
+ */
+async function handleGetKeywordDifficulty(
+	args: SeoKeywordDifficultyToolArgsType,
+) {
+	const methodLogger = Logger.forContext(
+		'tools/reviewwebsite.tool.ts',
+		'handleGetKeywordDifficulty',
+	);
+	methodLogger.debug(`Getting keyword difficulty:`, {
+		...args,
+		api_key: args.api_key ? '[REDACTED]' : undefined,
+	});
+
+	try {
+		const result = await reviewWebsiteController.getKeywordDifficulty(
+			args.keyword,
+			{
+				country: args.country,
+			},
+			{
+				api_key: args.api_key,
+			},
+		);
+
+		return {
+			content: [
+				{
+					type: 'text' as const,
+					text: result.content,
+				},
+			],
+		};
+	} catch (error) {
+		methodLogger.error(`Error getting keyword difficulty`, error);
+		return formatErrorForMcpTool(error);
+	}
+}
+
+/**
+ * @function handleGetTraffic
+ * @description MCP Tool handler to check traffic for a domain or URL
+ * @param {SeoTrafficToolArgsType} args - Arguments provided to the tool
+ * @returns {Promise<{ content: Array<{ type: 'text', text: string }> }>} Formatted response for the MCP
+ */
+async function handleGetTraffic(args: SeoTrafficToolArgsType) {
+	const methodLogger = Logger.forContext(
+		'tools/reviewwebsite.tool.ts',
+		'handleGetTraffic',
+	);
+	methodLogger.debug(`Checking traffic:`, {
+		...args,
+		api_key: args.api_key ? '[REDACTED]' : undefined,
+	});
+
+	try {
+		const result = await reviewWebsiteController.getTraffic(
+			args.domainOrUrl,
+			{
+				mode: args.mode,
+				country: args.country,
+			},
+			{
+				api_key: args.api_key,
+			},
+		);
+
+		return {
+			content: [
+				{
+					type: 'text' as const,
+					text: result.content,
+				},
+			],
+		};
+	} catch (error) {
+		methodLogger.error(`Error checking traffic`, error);
+		return formatErrorForMcpTool(error);
+	}
+}
+
+/**
+ * @function handleGetBacklinks
+ * @description MCP Tool handler to get backlinks for a domain
+ * @param {SeoBacklinksToolArgsType} args - Arguments provided to the tool
+ * @returns {Promise<{ content: Array<{ type: 'text', text: string }> }>} Formatted response for the MCP
+ */
+async function handleGetBacklinks(args: SeoBacklinksToolArgsType) {
+	const methodLogger = Logger.forContext(
+		'tools/reviewwebsite.tool.ts',
+		'handleGetBacklinks',
+	);
+	methodLogger.debug(`Getting backlinks:`, {
+		...args,
+		api_key: args.api_key ? '[REDACTED]' : undefined,
+	});
+
+	try {
+		const result = await reviewWebsiteController.getBacklinks(args.domain, {
+			api_key: args.api_key,
+		});
+
+		return {
+			content: [
+				{
+					type: 'text' as const,
+					text: result.content,
+				},
+			],
+		};
+	} catch (error) {
+		methodLogger.error(`Error getting backlinks`, error);
+		return formatErrorForMcpTool(error);
+	}
+}
+
+/**
  * @function register
  * @description Registers the ReviewWeb.site tools with the MCP server
  * @param {McpServer} server - The MCP server instance
@@ -621,6 +791,35 @@ function register(server: McpServer) {
 		`Get URL after redirects using ReviewWeb.site API.`,
 		UrlGetUrlAfterRedirectsToolArgs.shape,
 		handleGetUrlAfterRedirects,
+	);
+
+	// Register SEO insights tools
+	server.tool(
+		'seo_keyword_ideas',
+		`Get keyword ideas for a keyword using ReviewWeb.site API.`,
+		SeoKeywordIdeasToolArgs.shape,
+		handleGetKeywordIdeas,
+	);
+
+	server.tool(
+		'seo_keyword_difficulty',
+		`Get keyword difficulty for a keyword using ReviewWeb.site API.`,
+		SeoKeywordDifficultyToolArgs.shape,
+		handleGetKeywordDifficulty,
+	);
+
+	server.tool(
+		'seo_traffic',
+		`Check traffic for a domain or URL using ReviewWeb.site API.`,
+		SeoTrafficToolArgs.shape,
+		handleGetTraffic,
+	);
+
+	server.tool(
+		'seo_backlinks',
+		`Get backlinks for a domain using ReviewWeb.site API.`,
+		SeoBacklinksToolArgs.shape,
+		handleGetBacklinks,
 	);
 
 	methodLogger.debug('Successfully registered ReviewWeb.site tools.');
