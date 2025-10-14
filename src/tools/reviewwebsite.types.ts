@@ -93,6 +93,10 @@ export const GetAIModelsToolArgs = z.object({
 export const ConvertToMarkdownToolArgs = z.object({
 	url: z.string().describe('The URL to convert to Markdown'),
 	model: z.string().optional().describe('AI model to use for conversion'),
+	instructions: z
+		.string()
+		.optional()
+		.describe('Optional custom conversion guidance for the AI'),
 	delayAfterLoad: z
 		.number()
 		.optional()
@@ -110,6 +114,10 @@ export const ConvertToMarkdownToolArgs = z.object({
 export const ConvertMultipleToMarkdownToolArgs = z.object({
 	urls: z.array(z.string()).describe('List of URLs to convert to Markdown'),
 	model: z.string().optional().describe('AI model to use for conversion'),
+	instructions: z
+		.string()
+		.optional()
+		.describe('Optional custom conversion guidance for the AI'),
 	delayAfterLoad: z
 		.number()
 		.optional()
@@ -469,6 +477,7 @@ export interface ReviewOptions {
  */
 export interface ConvertToMarkdownOptions {
 	model?: string;
+	instructions?: string;
 	delayAfterLoad?: number;
 	debug?: boolean;
 }

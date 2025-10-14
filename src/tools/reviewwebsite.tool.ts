@@ -61,6 +61,7 @@ async function handleConvertToMarkdown(args: ConvertToMarkdownToolArgsType) {
 			args.url,
 			{
 				model: args.model,
+				instructions: args.instructions,
 				delayAfterLoad: args.delayAfterLoad,
 				debug: args.debug,
 			},
@@ -106,6 +107,7 @@ async function handleConvertMultipleToMarkdown(
 			args.urls,
 			{
 				model: args.model,
+				instructions: args.instructions,
 				delayAfterLoad: args.delayAfterLoad,
 				debug: args.debug,
 			},
