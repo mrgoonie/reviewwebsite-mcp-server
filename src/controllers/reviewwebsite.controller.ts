@@ -682,6 +682,50 @@ async function getBacklinks(
 	}
 }
 
+/**
+ * @function htmlToScreenshot
+ * @description Convert raw HTML to a screenshot image
+ * @memberof ReviewWebsiteController
+ * @param {string} html - Raw HTML string to render
+ * @param {object} options - Screenshot options
+ * @param {ReviewWebsiteOptions} apiOptions - Options including API key
+ * @returns {Promise<ControllerResponse>} A promise that resolves to the standard controller response
+ * @throws {McpError} Throws an McpError if the service call fails or returns an error
+ */
+async function htmlToScreenshot(
+	html: string,
+	options?: {
+		viewport?: { width: number; height: number };
+		fullPage?: boolean;
+		output?: string;
+		type?: string;
+		quality?: number;
+		delayAfterLoad?: number;
+	},
+	apiOptions: ReviewWebsiteOptions = {},
+): Promise<ControllerResponse> {
+	const methodLogger = Logger.forContext(
+		'controllers/reviewwebsite.controller.ts',
+		'htmlToScreenshot',
+	);
+	methodLogger.debug('Converting HTML to screenshot');
+
+	try {
+		const apiKey = getApiKey(apiOptions);
+		const result = await reviewWebsiteService.htmlToScreenshot(html, options, apiKey);
+
+		return {
+			content: JSON.stringify(result, null, 2),
+		};
+	} catch (error) {
+		return handleControllerError(error, {
+			entityType: 'Screenshot',
+			operation: 'converting HTML to screenshot',
+			source: 'controllers/reviewwebsite.controller.ts@htmlToScreenshot',
+		});
+	}
+}
+
 export default {
 	convertToMarkdown,
 	convertMultipleToMarkdown,
@@ -698,4 +742,5 @@ export default {
 	getKeywordDifficulty,
 	getTraffic,
 	getBacklinks,
+	htmlToScreenshot,
 };

@@ -38,6 +38,8 @@ import {
 	SeoTrafficToolArgsType,
 	SeoBacklinksToolArgs,
 	SeoBacklinksToolArgsType,
+	HtmlToScreenshotToolArgs,
+	type HtmlToScreenshotToolArgsType,
 } from './reviewwebsite.types.js';
 
 /**
@@ -700,6 +702,45 @@ async function handleGetBacklinks(args: SeoBacklinksToolArgsType) {
 }
 
 /**
+ * @function handleHtmlToScreenshot
+ * @description MCP Tool handler to convert HTML content to a screenshot image
+ * @param {HtmlToScreenshotToolArgsType} args - Arguments provided to the tool
+ * @returns {Promise<{ content: Array<{ type: 'text', text: string }> }>} Formatted response for the MCP
+ */
+async function handleHtmlToScreenshot(args: HtmlToScreenshotToolArgsType) {
+	const methodLogger = Logger.forContext(
+		'tools/reviewwebsite.tool.ts',
+		'handleHtmlToScreenshot',
+	);
+	methodLogger.debug('Converting HTML to screenshot', {
+		...args,
+		html: args.html.substring(0, 100) + '...',
+		api_key: args.api_key ? '[REDACTED]' : undefined,
+	});
+
+	try {
+		const result = await reviewWebsiteController.htmlToScreenshot(
+			args.html,
+			{
+				viewport: { width: args.viewport_width ?? 1400, height: args.viewport_height ?? 800 },
+				fullPage: args.full_page,
+				output: args.output,
+				type: args.type,
+				quality: args.quality,
+				delayAfterLoad: args.delay_after_load,
+			},
+			{ api_key: args.api_key },
+		);
+		return {
+			content: [{ type: 'text' as const, text: result.content }],
+		};
+	} catch (error) {
+		methodLogger.error('Error converting HTML to screenshot', error);
+		return formatErrorForMcpTool(error);
+	}
+}
+
+/**
  * @function register
  * @description Registers the ReviewWeb.site tools with the MCP server
  * @param {McpServer} server - The MCP server instance
@@ -822,6 +863,15 @@ function register(server: McpServer) {
 		`Get backlinks for a domain using ReviewWeb.site API.`,
 		SeoBacklinksToolArgs.shape,
 		handleGetBacklinks,
+	);
+
+	// Register screenshot tools
+	server.tool(
+		'html_to_screenshot',
+		`Convert HTML content to a screenshot image using ReviewWeb.site API.
+   Renders raw HTML string via headless browser and returns screenshot as hosted URL or image data.`,
+		HtmlToScreenshotToolArgs.shape,
+		handleHtmlToScreenshot,
 	);
 
 	methodLogger.debug('Successfully registered ReviewWeb.site tools.');
