@@ -69,8 +69,15 @@ jobs:
           echo "⚠️ Disabling npm publish due to invalid/missing NPM_TOKEN"
           node scripts/disable-npm-publish.cjs
 
-      - name: Release
+      - name: Release (with npm)
+        if: steps.npm-check.outputs.npm_valid == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npx semantic-release
+
+      - name: Release (without npm)
+        if: steps.npm-check.outputs.npm_valid == 'false'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release
