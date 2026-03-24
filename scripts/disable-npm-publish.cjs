@@ -1,5 +1,5 @@
 /**
- * Removes @semantic-release/npm plugin from semantic-release config.
+ * Removes @semantic-release/npm plugin from .releaserc.json config.
  * Used by CI when NPM_TOKEN is invalid/missing to still allow
  * GitHub releases, changelogs, and version bumps to proceed.
  *
@@ -9,27 +9,25 @@
 const fs = require('fs');
 const path = require('path');
 
-const pkgPath = path.join(__dirname, '..', 'package.json');
-console.log('Reading:', pkgPath);
-const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+const configPath = path.join(__dirname, '..', '.releaserc.json');
+console.log('Reading:', configPath);
 
-if (pkg.release && pkg.release.plugins) {
-	const before = pkg.release.plugins.length;
-	console.log('Plugins before:', pkg.release.plugins.map(p => Array.isArray(p) ? p[0] : p));
-	pkg.release.plugins = pkg.release.plugins.filter((p) => {
+if (!fs.existsSync(configPath)) {
+	console.log('⚠️ .releaserc.json not found - skipping');
+	process.exit(0);
+}
+
+const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+
+if (config.plugins) {
+	const before = config.plugins.length;
+	config.plugins = config.plugins.filter((p) => {
 		const name = Array.isArray(p) ? p[0] : p;
 		return name !== '@semantic-release/npm';
 	});
-	const removed = before - pkg.release.plugins.length;
-	console.log('Plugins after:', pkg.release.plugins.map(p => Array.isArray(p) ? p[0] : p));
-	fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, '\t') + '\n');
-	console.log(`✅ Removed ${removed} npm plugin(s) from semantic-release config`);
-
-	// Verify write
-	const verify = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
-	const hasNpm = verify.release.plugins.some(p => (Array.isArray(p) ? p[0] : p) === '@semantic-release/npm');
-	console.log('Verification - npm plugin still present:', hasNpm);
+	const removed = before - config.plugins.length;
+	fs.writeFileSync(configPath, JSON.stringify(config, null, '\t') + '\n');
+	console.log(`✅ Removed ${removed} npm plugin(s) from .releaserc.json`);
 } else {
-	console.log('⚠️ No release.plugins found in package.json - skipping');
-	console.log('pkg.release:', JSON.stringify(pkg.release));
+	console.log('⚠️ No plugins array found in .releaserc.json');
 }
