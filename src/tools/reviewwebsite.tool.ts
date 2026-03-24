@@ -722,7 +722,10 @@ async function handleHtmlToScreenshot(args: HtmlToScreenshotToolArgsType) {
 		const result = await reviewWebsiteController.htmlToScreenshot(
 			args.html,
 			{
-				viewport: { width: args.viewport_width ?? 1400, height: args.viewport_height ?? 800 },
+				viewport: {
+					width: args.viewport_width ?? 1400,
+					height: args.viewport_height ?? 800,
+				},
 				fullPage: args.full_page,
 				output: args.output,
 				type: args.type,

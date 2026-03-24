@@ -712,7 +712,11 @@ async function htmlToScreenshot(
 
 	try {
 		const apiKey = getApiKey(apiOptions);
-		const result = await reviewWebsiteService.htmlToScreenshot(html, options, apiKey);
+		const result = await reviewWebsiteService.htmlToScreenshot(
+			html,
+			options,
+			apiKey,
+		);
 
 		return {
 			content: JSON.stringify(result, null, 2),
