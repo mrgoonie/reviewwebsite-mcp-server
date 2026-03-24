@@ -67,7 +67,7 @@ jobs:
         if: steps.npm-check.outputs.npm_valid == 'false'
         run: |
           echo "⚠️ Disabling npm publish due to invalid/missing NPM_TOKEN"
-          node scripts/disable-npm-publish.js
+          node scripts/disable-npm-publish.cjs
 
       - name: Release
         env:
