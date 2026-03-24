@@ -43,8 +43,47 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
       
+      - name: Verify npm token
+        id: npm-check
+        run: |
+          if [ -z "$NPM_TOKEN" ]; then
+            echo "npm_valid=false" >> "$GITHUB_OUTPUT"
+            echo "⚠️ NPM_TOKEN not set - npm publishing will be skipped"
+          else
+            echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+            if npm whoami --registry https://registry.npmjs.org/ 2>/dev/null; then
+              echo "npm_valid=true" >> "$GITHUB_OUTPUT"
+              echo "✅ NPM token valid"
+            else
+              echo "npm_valid=false" >> "$GITHUB_OUTPUT"
+              echo "⚠️ NPM_TOKEN expired/invalid - npm publishing will be skipped"
+            fi
+            rm -f .npmrc
+          fi
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npx semantic-release
+          SR_NPM_PUBLISH: ${{ steps.npm-check.outputs.npm_valid }}
+        run: |
+          if [ "$SR_NPM_PUBLISH" = "false" ]; then
+            echo "⚠️ NPM token invalid/missing - running release without npm publish"
+            # Override semantic-release config to skip npm publish
+            node -e "
+              const pkg = require('./package.json');
+              const plugins = pkg.release.plugins.map(p => {
+                if (Array.isArray(p) && p[0] === '@semantic-release/npm') {
+                  return [p[0], { ...p[1], npmPublish: false }];
+                }
+                return p;
+              });
+              pkg.release.plugins = plugins;
+              require('fs').writeFileSync('package.json', JSON.stringify(pkg, null, '\t') + '\n');
+            "
+            npx semantic-release
+          else
+            npx semantic-release
+          fi
