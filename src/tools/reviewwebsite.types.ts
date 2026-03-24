@@ -554,14 +554,47 @@ export interface SeoBacklinksOptions {
 // HTML-to-Screenshot tool arguments
 export const HtmlToScreenshotToolArgs = z.object({
 	html: z.string().describe('Raw HTML string to render as a screenshot'),
-	viewport_width: z.number().optional().default(1400).describe('Viewport width in pixels (100-3840)'),
-	viewport_height: z.number().optional().default(800).describe('Viewport height in pixels (100-2160)'),
-	full_page: z.boolean().optional().default(false).describe('Capture full page instead of just viewport'),
-	output: z.enum(['url', 'buffer']).optional().default('url').describe('"url" returns hosted image URL, "buffer" returns base64 image data'),
-	type: z.enum(['png', 'jpeg']).optional().default('png').describe('Screenshot image format'),
-	quality: z.number().optional().describe('JPEG quality 1-100 (only used when type is jpeg)'),
-	delay_after_load: z.number().optional().default(0).describe('Milliseconds to wait after page load before taking screenshot'),
+	viewport_width: z
+		.number()
+		.optional()
+		.default(1400)
+		.describe('Viewport width in pixels (100-3840)'),
+	viewport_height: z
+		.number()
+		.optional()
+		.default(800)
+		.describe('Viewport height in pixels (100-2160)'),
+	full_page: z
+		.boolean()
+		.optional()
+		.default(false)
+		.describe('Capture full page instead of just viewport'),
+	output: z
+		.enum(['url', 'buffer'])
+		.optional()
+		.default('url')
+		.describe(
+			'"url" returns hosted image URL, "buffer" returns base64 image data',
+		),
+	type: z
+		.enum(['png', 'jpeg'])
+		.optional()
+		.default('png')
+		.describe('Screenshot image format'),
+	quality: z
+		.number()
+		.optional()
+		.describe('JPEG quality 1-100 (only used when type is jpeg)'),
+	delay_after_load: z
+		.number()
+		.optional()
+		.default(0)
+		.describe(
+			'Milliseconds to wait after page load before taking screenshot',
+		),
 	api_key: z.string().optional().describe('Your ReviewWebsite API key'),
 });
 
-export type HtmlToScreenshotToolArgsType = z.infer<typeof HtmlToScreenshotToolArgs>;
+export type HtmlToScreenshotToolArgsType = z.infer<
+	typeof HtmlToScreenshotToolArgs
+>;
