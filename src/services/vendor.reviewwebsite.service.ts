@@ -721,6 +721,52 @@ async function getBacklinks(domain: string, apiKey?: string): Promise<any> {
 	}
 }
 
+/**
+ * @function htmlToScreenshot
+ * @description Convert raw HTML to a screenshot image
+ * @memberof ReviewWebsiteService
+ * @param {string} html - Raw HTML string to render
+ * @param {object} options - Screenshot options
+ * @param {string} apiKey - ReviewWebsite API key
+ * @returns {Promise<any>} Response from the ReviewWebsite API
+ * @throws {McpError} If the API request fails
+ */
+async function htmlToScreenshot(
+	html: string,
+	options?: {
+		viewport?: { width: number; height: number };
+		fullPage?: boolean;
+		output?: string;
+		type?: string;
+		quality?: number;
+		delayAfterLoad?: number;
+	},
+	apiKey?: string,
+): Promise<any> {
+	const methodLogger = Logger.forContext(
+		'services/vendor.reviewwebsite.service.ts',
+		'htmlToScreenshot',
+	);
+	methodLogger.debug('Converting HTML to screenshot');
+
+	try {
+		const response = await axios.post(
+			`${API_BASE}/html-to-screenshot`,
+			{
+				html,
+				...options,
+			},
+			{
+				headers: getHeaders(apiKey),
+			},
+		);
+		methodLogger.debug('Successfully converted HTML to screenshot');
+		return response.data;
+	} catch (error) {
+		return handleApiError(error, 'htmlToScreenshot');
+	}
+}
+
 export default {
 	convertToMarkdown,
 	convertMultipleToMarkdown,
@@ -737,4 +783,5 @@ export default {
 	getKeywordDifficulty,
 	getTraffic,
 	getBacklinks,
+	htmlToScreenshot,
 };
