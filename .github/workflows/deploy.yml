@@ -32,7 +32,7 @@ jobs:
           registry: digitopdockerhub
           deploy_env: prod
           tail: true
-          port: 3000
+          port: 8080
 
       # - name: Send Discord Notification
       #   uses: sarisia/actions-status-discord@v1
