@@ -108,7 +108,7 @@
 		"jimp": "^1.6.0",
 		"lodash": "^4.17.21",
 		"module-alias": "^2.2.3",
-		"zod": "^3.25.76"
+		"zod": "^4.3.6"
 	},
 	"directories": {
 		"example": "examples"
