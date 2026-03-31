@@ -11,10 +11,10 @@ startCommand:
         type: boolean
         default: false
         description: Enable debug logging
-      ipapiApiToken:
+      reviewwebsiteApiKey:
         type: string
         default: ""
-        description: API token for the IP API service
+        description: API key for ReviewWeb.site API
   commandFunction:
     # A JS function that produces the CLI command based on the given config to start the MCP on stdio.
     |-
@@ -24,11 +24,11 @@ startCommand:
       if (config.debug) {
         env.DEBUG = 'true';
       }
-      if (config.ipapiApiToken) {
-        env.IPAPI_API_TOKEN = config.ipapiApiToken;
+      if (config.reviewwebsiteApiKey) {
+        env.REVIEWWEBSITE_API_KEY = config.reviewwebsiteApiKey;
       }
       return { command: 'node', args: ['dist/index.js'], env };
     }
   exampleConfig:
     debug: true
-    ipapiApiToken: YOUR_API_TOKEN
+    reviewwebsiteApiKey: YOUR_API_KEY

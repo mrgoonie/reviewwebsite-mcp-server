@@ -101,6 +101,7 @@ export function ensureMcpError(error: unknown): McpError {
  */
 export function formatErrorForMcpTool(error: unknown): {
 	content: Array<{ type: 'text'; text: string }>;
+	isError: boolean;
 } {
 	const methodLogger = Logger.forContext(
 		'utils/error.util.ts',
@@ -116,6 +117,7 @@ export function formatErrorForMcpTool(error: unknown): {
 				text: `Error: ${mcpError.message}`,
 			},
 		],
+		isError: true,
 	};
 }
 
