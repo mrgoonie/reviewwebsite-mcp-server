@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/mrgoonie/reviewwebsite-mcp-server/compare/v1.3.0...v1.3.1) (2026-03-31)
+
+
+### Bug Fixes
+
+* correct package naming, smithery config, and MCP error handling ([ac14830](https://github.com/mrgoonie/reviewwebsite-mcp-server/commit/ac14830fb6059beb86dd4dac773e84752a330ffe))
+
 # [1.3.0](https://github.com/mrgoonie/reviewwebsite-mcp-server/compare/v1.2.0...v1.3.0) (2026-03-24)
 
 
