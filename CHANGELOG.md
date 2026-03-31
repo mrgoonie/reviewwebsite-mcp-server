@@ -1,3 +1,10 @@
+## [1.3.2](https://github.com/mrgoonie/reviewwebsite-mcp-server/compare/v1.3.1...v1.3.2) (2026-03-31)
+
+
+### Bug Fixes
+
+* deploy port 8080 ([d78a1bc](https://github.com/mrgoonie/reviewwebsite-mcp-server/commit/d78a1bc04d0130848aa127c7ddc12c17aa8325a4))
+
 ## [1.3.1](https://github.com/mrgoonie/reviewwebsite-mcp-server/compare/v1.3.0...v1.3.1) (2026-03-31)
 
 
